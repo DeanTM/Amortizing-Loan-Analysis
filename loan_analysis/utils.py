@@ -1,7 +1,59 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .loan import Summary, AmortizingLoan
+from .loan import AmortizingLoan
+from .summary import Summary
+
+
+def plot_mean_and_95_percentile(
+    data,
+    ax=None,
+    colour=None,
+    label=None,
+    percentile=5
+    ):
+    if ax is None:
+        ax = plt.gca()
+    mean = np.mean(data, axis=1)
+    percentile_low = np.percentile(data,percentile/2,axis=1)
+    percentile_high = np.percentile(data,100-percentile/2,axis=1)
+    ax.fill_between(
+        np.arange(data.shape[0]),
+        percentile_low,
+        percentile_high,
+        color=colour,
+        alpha=0.5,
+        label=label)
+    ax.plot(
+        np.arange(data.shape[0]),
+        mean,
+        color=colour)
+    return ax
+
+
+
+def plot_mean_pm_std(
+    data,
+    ax=None,
+    colour=None,
+    label=None
+    ):
+    if ax is None:
+        ax = plt.gca()
+    mean = np.mean(data, axis=1)
+    std = np.std(data, axis=1)
+    ax.fill_between(
+        np.arange(data.shape[0]),
+        mean-std,
+        mean+std,
+        color=colour,
+        alpha=0.5,
+        label=label)
+    ax.plot(
+        np.arange(data.shape[0]),
+        mean,
+        color=colour)
+    return ax
 
 
 def plot_repayments(
@@ -26,7 +78,7 @@ def plot_repayments(
     ax.set_ylabel("Cumulative Payment (euros)")
     ax.grid(":")
     if show_legend:
-        ax.legend()
+        ax.legend(loc="upper left")
     return ax
 
 
